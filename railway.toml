@@ -6,13 +6,15 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "python -m uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1"
+# No startCommand here — let the Dockerfile CMD handle it
+# CMD uses shell form: sh -c "uvicorn ... --port ${PORT:-8000}"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 3
 
 # ── Health check ─────────────────────────────────────────────
+# 90s initial delay: sentence-transformers model loads on first startup
 [[deploy.healthcheck]]
 httpPath = "/health"
-initialDelaySeconds = 30
-timeoutSeconds = 10
+initialDelaySeconds = 90
+timeoutSeconds = 15
 intervalSeconds = 30
