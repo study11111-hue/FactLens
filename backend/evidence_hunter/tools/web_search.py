@@ -6,11 +6,10 @@ Searches the web for evidence using the Tavily AI API.
 import json
 import os
 
-from agency_swarm.tools import BaseTool
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 
-class WebSearch(BaseTool):
+class WebSearch(BaseModel):
     """
     Searches the web for evidence related to a factual claim
     using the Tavily AI API. Returns structured search results

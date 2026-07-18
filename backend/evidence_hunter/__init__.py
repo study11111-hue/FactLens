@@ -1,1 +1,2 @@
-from .evidence_hunter import EvidenceHunterAgent
+# Evidence Hunter package
+# Note: Agent class not auto-imported to avoid agency_swarm dependency at runtime

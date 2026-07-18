@@ -7,8 +7,7 @@ import hashlib
 import json
 import os
 
-from agency_swarm.tools import BaseTool
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 
 # Module-level singleton for the embedding model (lazy-loaded)
@@ -60,7 +59,7 @@ def _chunk_text(text: str, chunk_size: int = 500, overlap: int = 50) -> list[str
     return chunks
 
 
-class StoreEvidence(BaseTool):
+class StoreEvidence(BaseModel):
     """
     Chunks web search results and stores them in the ChromaDB
     vector database for later retrieval. Uses sentence-transformers

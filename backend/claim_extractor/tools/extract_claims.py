@@ -6,8 +6,7 @@ Parses transcript text and extracts verifiable factual claims using Groq.
 import json
 import os
 
-from agency_swarm.tools import BaseTool
-from pydantic import Field
+from pydantic import BaseModel, Field
 from groq import Groq
 
 
@@ -33,7 +32,7 @@ Transcript:
 """
 
 
-class ExtractClaims(BaseTool):
+class ExtractClaims(BaseModel):
     """
     Extracts verifiable factual claims from raw transcript text.
     Uses Groq LLM to parse and identify claims that can be fact-checked.

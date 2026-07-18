@@ -6,8 +6,7 @@ Evaluates a claim against evidence and produces a structured verdict.
 import json
 import os
 
-from agency_swarm.tools import BaseTool
-from pydantic import Field
+from pydantic import BaseModel, Field
 from groq import Groq
 
 
@@ -36,7 +35,7 @@ Return ONLY a valid JSON object. No other text.
 """
 
 
-class GenerateVerdict(BaseTool):
+class GenerateVerdict(BaseModel):
     """
     Evaluates a factual claim against retrieved evidence
     and produces a structured verdict with confidence score,

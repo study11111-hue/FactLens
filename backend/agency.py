@@ -18,10 +18,10 @@ except ImportError:
 import os
 from agency_swarm import Agency, set_openai_key
 
-from orchestrator import OrchestratorAgent
-from claim_extractor import ClaimExtractorAgent
-from evidence_hunter import EvidenceHunterAgent
-from verdict_generator import VerdictGeneratorAgent
+from orchestrator.orchestrator import OrchestratorAgent
+from claim_extractor.claim_extractor import ClaimExtractorAgent
+from evidence_hunter.evidence_hunter import EvidenceHunterAgent
+from verdict_generator.verdict_generator import VerdictGeneratorAgent
 
 from config import GROQ_API_KEY, GROQ_MODEL
 

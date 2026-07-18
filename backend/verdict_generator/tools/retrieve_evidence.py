@@ -6,8 +6,7 @@ Performs semantic search over ChromaDB to retrieve relevant evidence.
 import json
 import os
 
-from agency_swarm.tools import BaseTool
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 
 _embedding_model = None
@@ -38,7 +37,7 @@ def _get_chroma_collection(session_id: str):
     )
 
 
-class RetrieveEvidence(BaseTool):
+class RetrieveEvidence(BaseModel):
     """
     Retrieves the most semantically relevant evidence chunks
     from ChromaDB for a given claim.
