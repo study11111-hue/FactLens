@@ -1,0 +1,402 @@
+/*
+ * FactLens — Overlay Panel Styles
+ * Premium glassmorphism design for Google Meet integration
+ */
+
+/* ── Panel Container ─────────────────────────────────── */
+
+#factlens-panel {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 380px;
+  max-height: 520px;
+  background: rgba(15, 15, 25, 0.88);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 0 60px -15px rgba(99, 102, 241, 0.15);
+  z-index: 999999;
+  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #e2e8f0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.3s ease;
+  animation: factlens-panel-enter 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#factlens-panel:hover {
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 0 80px -15px rgba(99, 102, 241, 0.2);
+}
+
+@keyframes factlens-panel-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Header ──────────────────────────────────────────── */
+
+.factlens-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  cursor: grab;
+  user-select: none;
+}
+
+.factlens-header:active {
+  cursor: grabbing;
+}
+
+.factlens-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.factlens-icon {
+  font-size: 18px;
+}
+
+.factlens-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #818cf8, #a78bfa, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.factlens-badge {
+  font-size: 10px;
+  color: #f87171;
+  transition: color 0.3s ease;
+  animation: factlens-pulse 2s infinite;
+}
+
+@keyframes factlens-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.factlens-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.factlens-counter {
+  font-size: 11px;
+  color: #94a3b8;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.factlens-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.factlens-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+}
+
+/* ── Body ────────────────────────────────────────────── */
+
+.factlens-body {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 440px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.factlens-body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.factlens-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.factlens-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+/* ── Empty State ─────────────────────────────────────── */
+
+.factlens-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.factlens-empty-icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+  opacity: 0.6;
+}
+
+.factlens-empty p {
+  margin: 0;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.factlens-hint {
+  font-size: 11px !important;
+  color: #64748b !important;
+  margin-top: 6px !important;
+}
+
+/* ── Processing Indicator ────────────────────────────── */
+
+.factlens-processing {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(99, 102, 241, 0.08);
+  border-bottom: 1px solid rgba(99, 102, 241, 0.15);
+  font-size: 12px;
+  color: #a5b4fc;
+}
+
+.factlens-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(99, 102, 241, 0.2);
+  border-top-color: #818cf8;
+  border-radius: 50%;
+  animation: factlens-spin 0.8s linear infinite;
+}
+
+@keyframes factlens-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Status Messages ─────────────────────────────────── */
+
+.factlens-status-msg {
+  padding: 8px 16px;
+  font-size: 11px;
+  color: #94a3b8;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: opacity 0.3s ease;
+}
+
+.factlens-error {
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.06);
+}
+
+/* ── Verdict Cards ───────────────────────────────────── */
+
+.factlens-verdict-card {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all 0.3s ease;
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+.factlens-verdict-card.factlens-visible {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.factlens-verdict-card:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.factlens-verdict-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.factlens-verdict-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.factlens-true {
+  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.factlens-false {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.factlens-misleading {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.factlens-unverified {
+  background: rgba(148, 163, 184, 0.1);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.factlens-confidence {
+  font-size: 12px;
+  font-weight: 600;
+  color: #a5b4fc;
+  font-variant-numeric: tabular-nums;
+}
+
+.factlens-claim-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #e2e8f0;
+  margin-bottom: 6px;
+  font-style: italic;
+}
+
+.factlens-speaker {
+  font-size: 11px;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.factlens-explanation {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+/* ── Sources ─────────────────────────────────────────── */
+
+.factlens-sources {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.factlens-sources-label {
+  font-size: 10px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-right: 2px;
+}
+
+.factlens-source-link {
+  font-size: 10px;
+  color: #818cf8;
+  text-decoration: none;
+  padding: 2px 6px;
+  background: rgba(99, 102, 241, 0.08);
+  border-radius: 4px;
+  border: 1px solid rgba(99, 102, 241, 0.12);
+  transition: all 0.2s ease;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.factlens-source-link:hover {
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+}
+
+/* ── Confidence Bar ──────────────────────────────────── */
+
+.factlens-confidence-bar {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.factlens-confidence-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.factlens-confidence-fill.factlens-true {
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+}
+
+.factlens-confidence-fill.factlens-false {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.factlens-confidence-fill.factlens-misleading {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.factlens-confidence-fill.factlens-unverified {
+  background: linear-gradient(90deg, #64748b, #94a3b8);
+}
+
+/* ── Slide-in Animation ──────────────────────────────── */
+
+.factlens-slide-in {
+  animation: factlens-card-enter 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes factlens-card-enter {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

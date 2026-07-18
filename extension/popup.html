@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FactLens</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 340px;
+      min-height: 400px;
+      background: #0a0a14;
+      color: #e2e8f0;
+      font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow-x: hidden;
+    }
+
+    .popup-container {
+      padding: 0;
+    }
+
+    /* ── Header ────────────────────────────────── */
+    .popup-header {
+      padding: 20px 20px 16px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(168, 85, 247, 0.08));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .popup-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .popup-brand-icon {
+      font-size: 24px;
+    }
+
+    .popup-brand-name {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #818cf8, #a78bfa, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .popup-tagline {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    /* ── Status ─────────────────────────────────── */
+    .popup-status {
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #f87171;
+      transition: background 0.3s ease;
+    }
+
+    .status-dot.connected {
+      background: #4ade80;
+      box-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
+    }
+
+    .status-text {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    /* ── Settings ───────────────────────────────── */
+    .popup-section {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .popup-section-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #64748b;
+      margin-bottom: 10px;
+    }
+
+    .popup-field {
+      margin-bottom: 12px;
+    }
+
+    .popup-field label {
+      display: block;
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 6px;
+    }
+
+    .popup-field input[type="text"] {
+      width: 100%;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      color: #e2e8f0;
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .popup-field input[type="text"]:focus {
+      border-color: rgba(99, 102, 241, 0.5);
+    }
+
+    /* Toggle Switch */
+    .popup-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .toggle-label {
+      font-size: 13px;
+      color: #e2e8f0;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 40px;
+      height: 22px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 11px;
+      transition: 0.3s;
+    }
+
+    .toggle-slider:before {
+      content: "";
+      position: absolute;
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background: #e2e8f0;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background: linear-gradient(135deg, #818cf8, #a78bfa);
+    }
+
+    .toggle-switch input:checked + .toggle-slider:before {
+      transform: translateX(18px);
+    }
+
+    /* ── Stats ──────────────────────────────────── */
+    .popup-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat-card {
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #818cf8;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    /* ── Footer ─────────────────────────────────── */
+    .popup-footer {
+      padding: 12px 20px;
+      text-align: center;
+    }
+
+    .popup-footer-text {
+      font-size: 10px;
+      color: #475569;
+    }
+
+    .popup-footer-text a {
+      color: #818cf8;
+      text-decoration: none;
+    }
+
+    /* ── Save Button ───────────────────────────── */
+    .popup-save-btn {
+      width: 100%;
+      padding: 10px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 8px;
+    }
+
+    .popup-save-btn:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
+    .popup-save-btn:active {
+      transform: translateY(0);
+    }
+
+    .popup-save-btn.saved {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+    }
+
+    /* ── Quick URL Buttons ─────────────────────────── */
+    .quick-btn {
+      flex: 1;
+      padding: 6px 10px;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 6px;
+      color: #a5b4fc;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .quick-btn:hover {
+      background: rgba(99, 102, 241, 0.25);
+      border-color: rgba(99, 102, 241, 0.6);
+      color: #fff;
+    }
+
+    .quick-btn.active {
+      background: rgba(99, 102, 241, 0.35);
+      border-color: #6366f1;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <div class="popup-header">
+      <div class="popup-brand">
+        <span class="popup-brand-icon">🔍</span>
+        <span class="popup-brand-name">FactLens</span>
+      </div>
+      <div class="popup-tagline">Real-time AI fact-checking for Google Meet</div>
+    </div>
+
+    <!-- Status -->
+    <div class="popup-status">
+      <div class="status-dot" id="status-dot"></div>
+      <span class="status-text" id="status-text">Disconnected</span>
+    </div>
+
+    <!-- Enable/Disable Toggle -->
+    <div class="popup-section">
+      <div class="popup-toggle">
+        <span class="toggle-label">Enable FactLens</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-enabled" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="popup-section">
+      <div class="popup-section-title">Connection</div>
+      <div class="popup-field">
+        <label for="backend-url">Backend URL</label>
+        <input type="text" id="backend-url" value="ws://localhost:8000/ws/factcheck" placeholder="ws://localhost:8000/ws/factcheck">
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <button class="quick-btn" id="btn-local" title="Use local backend">🖥 Local</button>
+          <button class="quick-btn" id="btn-prod" title="Use Railway production URL">🚂 Railway</button>
+        </div>
+      </div>
+      <input type="text" id="railway-url" placeholder="wss://your-app.railway.app/ws/factcheck" style="display:none;width:100%;padding:8px 12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:#e2e8f0;font-size:12px;font-family:'JetBrains Mono',monospace;outline:none;margin-top:6px;box-sizing:border-box">
+      <button class="popup-save-btn" id="save-btn">Save Settings</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="popup-section">
+      <div class="popup-section-title">Session Stats</div>
+      <div class="popup-stats">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-claims">0</div>
+          <div class="stat-label">Claims Checked</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-session">—</div>
+          <div class="stat-label">Session ID</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="popup-footer">
+      <span class="popup-footer-text">
+        Powered by Groq + Agency Swarm
+      </span>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
