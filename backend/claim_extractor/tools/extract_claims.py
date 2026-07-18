@@ -49,7 +49,7 @@ class ExtractClaims(BaseModel):
 
     def run(self) -> str:
         """Extract factual claims from the transcript text."""
-        client = Groq(api_key=os.getenv("GROQ_API_KEY", ""))
+        client = Groq(api_key=os.getenv("GROQ_API_KEY", ""), timeout=10.0)
 
         try:
             response = client.chat.completions.create(

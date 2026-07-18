@@ -61,7 +61,7 @@ class GenerateVerdict(BaseModel):
 
     def run(self) -> str:
         """Generate a fact-check verdict."""
-        client = Groq(api_key=os.getenv("GROQ_API_KEY", ""))
+        client = Groq(api_key=os.getenv("GROQ_API_KEY", ""), timeout=10.0)
 
         # Format evidence for the prompt
         try:

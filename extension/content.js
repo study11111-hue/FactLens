@@ -22,6 +22,8 @@
   const CAPTION_DEBOUNCE = 3000;
   let verdictHistory = [];
   let panelMinimized = false;
+  let activeObservedContainer = null;
+  let activeCaptionObserver = null;
 
   // ── Initialize ───────────────────────────────────────────
 
@@ -49,7 +51,7 @@
     connectWebSocket();
 
     // Start observing captions
-    waitForCaptions();
+    startCaptionMonitoring();
   }
 
   function getSettings() {
@@ -115,49 +117,61 @@
     }, RECONNECT_DELAY);
   }
 
+  let lastSentText = '';
+
   function sendToBackend(text, speaker) {
     if (!ws || ws.readyState !== WebSocket.OPEN) return;
+
+    const cleanedText = text.trim();
+    if (!cleanedText || cleanedText.length < 10) return;
+
+    // Skip duplicate transmissions or subsets of the last sent transcript block
+    if (cleanedText === lastSentText || lastSentText.includes(cleanedText)) {
+      console.log('FactLens: Skipping duplicate/subset caption transmission:', cleanedText);
+      return;
+    }
+
+    lastSentText = cleanedText;
+
     ws.send(
       JSON.stringify({
         type: 'transcript',
-        text: text,
+        text: cleanedText,
         speaker: speaker,
         session_id: sessionId || 'default',
       })
     );
   }
 
+
   // ── Caption Observation ──────────────────────────────────
 
-  function waitForCaptions() {
-    // Google Meet renders captions in a container.
-    // We poll for it since it appears dynamically when captions are turned on.
-    const checkInterval = setInterval(() => {
-      const captionContainer = findCaptionContainer();
-      if (captionContainer) {
-        clearInterval(checkInterval);
-        observeCaptions(captionContainer);
-        console.log('🎙️ FactLens: Caption container found, observing...');
-        addStatusMessage('Caption detection active — listening for claims');
-      }
-    }, 2000);
-
-    // Also observe for the container appearing later
-    const bodyObserver = new MutationObserver(() => {
+  function startCaptionMonitoring() {
+    // Check for caption container every 1 second
+    setInterval(() => {
       const container = findCaptionContainer();
       if (container) {
-        bodyObserver.disconnect();
-        clearInterval(checkInterval);
-        observeCaptions(container);
-        console.log('🎙️ FactLens: Caption container detected via observer');
-        addStatusMessage('Caption detection active — listening for claims');
+        // If it's a new container, or the previous observer was lost/detached
+        if (container !== activeObservedContainer || !document.body.contains(activeObservedContainer)) {
+          if (activeCaptionObserver) {
+            activeCaptionObserver.disconnect();
+          }
+          activeObservedContainer = container;
+          observeCaptions(container);
+          console.log('🎙️ FactLens: Started observing new/updated caption container');
+          addStatusMessage('Caption detection active — listening for claims');
+        }
+      } else {
+        if (activeObservedContainer) {
+          console.log('🎙️ FactLens: Caption container lost');
+          activeObservedContainer = null;
+          if (activeCaptionObserver) {
+            activeCaptionObserver.disconnect();
+            activeCaptionObserver = null;
+          }
+        }
       }
-    });
-
-    bodyObserver.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
+    }, 1000);
   }
 
   function findCaptionContainer() {
@@ -192,6 +206,7 @@
       subtree: true,
       characterData: true,
     });
+    activeCaptionObserver = observer;
   }
 
   function processCaptionUpdate(container) {
