@@ -190,6 +190,17 @@ app.add_middleware(
 
 # ── REST Endpoints ────────────────────────────────────────
 
+@app.get("/")
+async def root():
+    """Root endpoint returning welcome metadata."""
+    return {
+        "message": "FactLens Real-Time Fact-Checking API is running!",
+        "version": "1.0.0",
+        "documentation": "/docs",
+        "health": "/health"
+    }
+
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint."""
