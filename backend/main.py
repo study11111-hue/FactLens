@@ -60,19 +60,17 @@ async def run_fact_check_pipeline(
     session_id: str,
 ) -> list[dict]:
     """
-    Run the fact-checking pipeline directly using Groq + Tavily + ChromaDB.
-    This provides a fast, direct pipeline without Agency Swarm orchestration
-    overhead, while still using the same tools under the hood.
+    Run the fact-checking pipeline: Extract → Search → Verdict.
+    Passes Tavily search results directly to the verdict generator
+    (no ChromaDB/embeddings needed — keeps Railway deploy lightweight).
     """
     from claim_extractor.tools.extract_claims import ExtractClaims
     from evidence_hunter.tools.web_search import WebSearch
-    from evidence_hunter.tools.store_evidence import StoreEvidence
-    from evidence_hunter.tools.retrieve_evidence import RetrieveEvidence
     from verdict_generator.tools.generate_verdict import GenerateVerdict
 
     verdicts = []
 
-    # Step 1: Extract claims
+    # Step 1: Extract claims from transcript
     extractor = ExtractClaims(transcript_text=transcript, speaker=speaker)
     claims_json = await asyncio.to_thread(extractor.run)
 
@@ -86,7 +84,7 @@ async def run_fact_check_pipeline(
     if not claims:
         return []
 
-    # Step 2-4: For each claim, search → store → retrieve → verdict
+    # Step 2 & 3: For each claim, search → generate verdict directly
     for claim_data in claims:
         claim_text = claim_data.get("claim_text", "")
         claim_speaker = claim_data.get("speaker", speaker)
@@ -95,29 +93,35 @@ async def run_fact_check_pipeline(
             continue
 
         try:
-            # Step 2: Web search
+            # Step 2: Web search via Tavily
             searcher = WebSearch(query=claim_text, max_results=5)
-            search_results = await asyncio.to_thread(searcher.run)
+            search_results_json = await asyncio.to_thread(searcher.run)
 
-            # Step 3: Store evidence in ChromaDB
-            storer = StoreEvidence(
-                search_results_json=search_results,
-                session_id=session_id,
-            )
-            await asyncio.to_thread(storer.run)
+            # Convert Tavily results → evidence format GenerateVerdict expects
+            evidence_list = []
+            try:
+                search_data = json.loads(search_results_json)
+                raw_results = (
+                    search_data
+                    if isinstance(search_data, list)
+                    else search_data.get("results", [])
+                )
+                for r in raw_results:
+                    content = r.get("content", "") or r.get("snippet", "")
+                    if content:
+                        evidence_list.append({
+                            "text": content,
+                            "source_url": r.get("url", ""),
+                            "source_title": r.get("title", ""),
+                            "similarity_score": 1.0,
+                        })
+            except (json.JSONDecodeError, TypeError):
+                evidence_list = []
 
-            # Step 4: Retrieve relevant evidence
-            retriever = RetrieveEvidence(
-                claim_text=claim_text,
-                session_id=session_id,
-                top_k=5,
-            )
-            evidence_json = await asyncio.to_thread(retriever.run)
-
-            # Step 5: Generate verdict
+            # Step 3: Generate verdict from search evidence (no RAG needed)
             generator = GenerateVerdict(
                 claim_text=claim_text,
-                evidence_json=evidence_json,
+                evidence_json=json.dumps({"evidence": evidence_list}),
                 speaker=claim_speaker,
             )
             verdict_json = await asyncio.to_thread(generator.run)
@@ -148,6 +152,7 @@ async def run_fact_check_pipeline(
     return verdicts
 
 
+
 # ── App Lifecycle ─────────────────────────────────────────
 
 @asynccontextmanager
@@ -156,22 +161,12 @@ async def lifespan(app: FastAPI):
     print("🔍 FactLens backend starting...")
     print(f"   Groq API Key: {'✅ Set' if GROQ_API_KEY else '❌ Missing'}")
     print(f"   Tavily API Key: {'✅ Set' if TAVILY_API_KEY else '❌ Missing'}")
-
-    # Pre-load the embedding model in background
-    async def preload():
-        try:
-            from evidence_hunter.tools.store_evidence import _get_embedding_model
-            await asyncio.to_thread(_get_embedding_model)
-            print("   Embedding model: ✅ Loaded")
-        except Exception as e:
-            print(f"   Embedding model: ⚠️ Will load on first use ({e})")
-
-    asyncio.create_task(preload())
-    print("🚀 FactLens ready! WebSocket at ws://localhost:8000/ws/factcheck")
+    print("🚀 FactLens ready! WebSocket at /ws/factcheck")
 
     yield
 
     print("👋 FactLens shutting down...")
+
 
 
 # ── FastAPI App ───────────────────────────────────────────
