@@ -6,7 +6,7 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# Shell form handles $PORT expansion correctly
-startCommand = "sh -c 'python -m uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1 --log-level info'"
+# Hardcode port to 8000 to match the domain's targetPort in Railway
+startCommand = "python -m uvicorn main:app --host 0.0.0.0 --port 8000 --workers 1 --log-level info"
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 3

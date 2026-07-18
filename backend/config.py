@@ -34,7 +34,7 @@ TOP_K_RESULTS = int(os.getenv("TOP_K_RESULTS", "5"))
 # ── Server Settings ──────────────────────────────────────
 SERVER_HOST = os.getenv("SERVER_HOST", "0.0.0.0")
 # Railway injects PORT env var — read it first, fall back to SERVER_PORT
-SERVER_PORT = int(os.getenv("PORT") or os.getenv("SERVER_PORT", "8000"))
+SERVER_PORT = int(os.getenv("SERVER_PORT", "8000"))
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")  # "production" on Railway
 CORS_ORIGINS = os.getenv(
     "CORS_ORIGINS",
