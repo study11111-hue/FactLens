@@ -3,6 +3,11 @@
   "name": "FactLens — Real-Time Fact Checker",
   "version": "1.0.0",
   "description": "AI-powered real-time fact-checking for Google Meet conversations. Powered by Groq + RAG pipeline.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "factlens@study11111-hue.com"
+    }
+  },
   "permissions": [
     "activeTab",
     "storage"
