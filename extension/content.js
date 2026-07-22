@@ -11,7 +11,7 @@
   // ── State ────────────────────────────────────────────────
   let ws = null;
   let isEnabled = true;
-  let backendUrl = 'ws://localhost:8000/ws/factcheck';
+  let backendUrl = 'wss://factlens-production-8178.up.railway.app/ws/factcheck';
   let sessionId = null;
   let captionBuffer = '';
   let captionTimer = null;

@@ -5,7 +5,7 @@
 
 // Default settings
 const DEFAULT_SETTINGS = {
-  backendUrl: 'ws://localhost:8000/ws/factcheck',
+  backendUrl: 'wss://factlens-production-8178.up.railway.app/ws/factcheck',
   enabled: true,
   sessionId: null,
 };
